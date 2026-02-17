@@ -35,7 +35,7 @@ jobs:
         run: npm install -g mystmd
 
       - name: Build book
-        run: myst build --html
+        run: myst build --html --base-url /${{ github.event.repository.name }}/
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
