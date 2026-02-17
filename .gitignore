@@ -1,11 +1,25 @@
 # MyST build artifacts
 _build/
+book/_build/
 .myst/
 
 # Python & Jupyter
 __pycache__/
 *.pyc
 .ipynb_checkpoints/
+venv/
+.env
+
+# Data & Models (MLOps standard: use DVC instead)
+data/
+models/
+*.pkl
+*.h5
+*.joblib
+
+# IDE
+.vscode/
+.idea/
 
 # OS specific
 .DS_Store
