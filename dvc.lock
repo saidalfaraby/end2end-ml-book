@@ -1,0 +1,22 @@
+schema: '2.0'
+stages:
+  train:
+    cmd: python src/train.py
+    deps:
+    - path: data/harga_rumah.csv
+      hash: md5
+      md5: 801f8030dad1df22a53edfdbfa4e80f0
+      size: 29981
+    - path: src/train.py
+      hash: md5
+      md5: babfcfe9422172295494bb0607b0a882
+      size: 1644
+    outs:
+    - path: metrics.json
+      hash: md5
+      md5: 66609e6d267096bda2d17a10d72158db
+      size: 60
+    - path: models/model.pkl
+      hash: md5
+      md5: 026c54f140f4c896c97eb68ebf807081
+      size: 568

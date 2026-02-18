@@ -1,0 +1,11 @@
+stages:
+  train:
+    cmd: python src/train.py
+    deps:
+      - data/harga_rumah.csv
+      - src/train.py
+    outs:
+      - models/model.pkl
+    metrics:
+      - metrics.json:
+          cache: false
