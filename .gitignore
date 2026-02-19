@@ -11,11 +11,18 @@ venv/
 .env
 
 # Data & Models (MLOps standard: use DVC instead)
-data/
+# /data/*
+# !/data/*.dvc
+# !/data/.gitkeep
+
+
 models/
 *.pkl
 *.h5
 *.joblib
+
+# MLflow logs
+mlruns/
 
 # IDE
 .vscode/

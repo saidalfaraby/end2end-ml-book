@@ -4,4 +4,4 @@
 format: jb-book
 root: intro
 chapters:
-  - file: 01-persiapan-data
+  - file: 01-e2e-v1/index
