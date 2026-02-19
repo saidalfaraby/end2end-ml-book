@@ -209,6 +209,15 @@ dvc repro
 
 Perintah `dvc repro` akan membaca `dvc.yaml`, melihat apakah ada perubahan pada data atau script, lalu menjalankan `src/train.py` jika diperlukan.
 
+Untuk melihat pipeline DVC dalam graph (DAG) gunakan perintah di bawah ini:
+
+```bash
+dvc dag
+```
+
+<center><img src="img/dvc_dag_train.png" alt="Pipeline DVC" width="50%" /></center>
+
+
 ### 3. Melihat Hasil di Dashboard MLflow
 MLflow menyediakan antarmuka web yang sangat cantik untuk membandingkan hasil eksperimen. Jalankan perintah ini di terminal:
 
@@ -217,6 +226,10 @@ mlflow ui
 ```
 
 Buka browser Anda dan akses http://127.0.0.1:5000. Anda akan melihat daftar eksperimen, metrik $R^2$, dan parameter yang baru saja dijalankan.
+
+![Dashboard MLflow](img/mlflow_dashboard.png)
+
+![Metrik hasil eksperimen](img/mlflow_metrics.png)
 
 ### 4. Versi-kan Model dan Metrik
 Setelah menjalankan `dvc repro`, DVC akan memperbarui sebuah file penting bernama `dvc.lock`. File inilah "sidik jari" asli dari model Anda.
@@ -303,16 +316,33 @@ Salah satu fitur terbaik FastAPI adalah Swagger UI. Tanpa perlu membuat UI, Anda
 3. Klik **"Try it out"**, masukkan data area/kamar, dan klik **Execute**.
 4. Lihat hasilnya di bagian **Response Body**.
 
+Misalnya kita bisa mengisi parameter `area`, `bedrooms`, dan `bathrooms` seperti pada gambar di bawah ini:
+
+![Tampilan input parameter untuk API House-Predict](img/api_predict_input.png)
+
+Kemudian setelah `Execute` prediksi harga rumah dapat dilihat di bagian `Response Body` seperti gambar di bawah ini:
+
+![Tampilan response dari API House-Predict](img/api_predict_response.png)
+
 ### 5. Menghubungkan ke DVC Pipeline
 Kita ingin agar DVC juga tahu bahwa `app/main.py` adalah bagian dari sistem kita. Tambahkan stage baru di `dvc.yaml`:
 
 ```yaml
-serve:
-    cmd: uvicorn app.main:app --host 0.0.0.0 --port 8000
-    deps:
-      - app/main.py
-      - models/model.pkl
+stages:
+    ...
+    ...
+    serve:
+        cmd: uvicorn app.main:app --host 0.0.0.0 --port 8000
+        deps:
+        - app/main.py
+        - models/model.pkl
 ```
+
+Sehingga gambar `dvc dag` harusnya menjadi seperti ini:
+
+Untuk melihat pipeline DVC dalam graph (DAG) gunakan perintah di bawah ini:
+
+<center><img src="img/dvc_dag_serve.png" alt="Pipeline DVC" width="50%" /></center>
 
 ## 5. Dockerization
 Sekarang setelah data ter-versi, eksperimen tercatat di MLflow, dan API sudah siap di FastAPI, masalah terakhir adalah: **"It works on my machine"**.
@@ -323,9 +353,14 @@ Kita perlu memastikan API ini bisa jalan di mana saja (laptop teman, server clou
 
 Setelah API siap, kita akan membungkusnya ke dalam sebuah **Container**. Bayangkan Docker sebagai peti kemas standar yang bisa diangkut oleh kapal apa saja, apa pun isinya.
 
+Pertama-tama silakan unduh dan install Docker Desktop sesuai sistem operasi Anda:
+* [Docker Desktop for Windows](https://www.docker.com/products/docker-desktop/) (Pilih yang mendukung **WSL 2**).
+* [Docker Desktop for Mac](https://www.docker.com/products/docker-desktop/) (Pilih **Apple Chip** jika Anda menggunakan M1/M2/M3).
+* [Docker for Linux](https://docs.docker.com/desktop/install/linux-install/): Gunakan perintah `sudo apt-get install docker-ce`.
+
 ### 1. Membuat file `requirements.txt`
 
-Sebelum membuat Docker image, kita perlu daftar pustaka yang harus diinstal di dalam container. Jalankan perintah ini untuk membuat file otomatis:
+Sebelum membuat Docker image, kita perlu daftar *library* yang harus diinstal di dalam container. Jalankan perintah ini untuk membuat file otomatis:
 
 ```bash
 pip list --format=freeze > requirements.txt
@@ -378,10 +413,4 @@ docker build -t house-api .
 docker run -p 8000:8000 house-api
 ```
 
-Jika semua berjalan lancar, maka kita bisa mengunjungi link di `http://0.0.0.0:8000/docs` lalu memilih `POST /predict` dan mengisi parameter `area`, `bedrooms`, dan `bathrooms` seperti pada gambar di bawah ini:
-
-![Tampilan input parameter untuk API House-Predict](img/api_predict_input.png)
-
-Kemudian klik tombol `Execute` dan prediksi harga rumah dapat dilihat di bagian `Response Body` seperti gambar di bawah ini:
-
-![Tampilan response dari API House-Predict](img/api_predict_response.png)
+Jika semua berjalan lancar, maka kita bisa mengunjungi link di `http://0.0.0.0:8000/docs` lalu melihat tampilan yang sama seperti sebelumnya.
